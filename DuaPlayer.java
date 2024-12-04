@@ -6,7 +6,7 @@ import java.awt.*;
 public class DuaPlayer extends JFrame {
     private Image backgroundImage;
     public DuaPlayer() {
-        setTitle("1 Player");
+        setTitle("2 Player");
         setSize(1440, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
