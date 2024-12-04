@@ -1,12 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Beranda extends JFrame {
     private Image backgroundImage;
+
     public Beranda() {
         setTitle("Tic Tac Toe");
         setSize(1440, 900);
@@ -31,7 +30,7 @@ public class Beranda extends JFrame {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.add(Box.createRigidArea(new Dimension(0,130)));
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 130)));
         buttonPanel.setOpaque(false);
 
         JButton satuPlayer = createButtonMenu("1 PLAYER", 300, 70);
@@ -43,16 +42,12 @@ public class Beranda extends JFrame {
         ActionListener ActionMenu = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == satuPlayer) {
-                    dispose();
-                    SatuPlayer satuP = new SatuPlayer();
-                    satuP.setVisible(true);
-                } else if (e.getSource() == duaPlayer) {
-                    dispose();
-                    DuaPlayer duaP = new DuaPlayer();
-                    duaP.setVisible(true);
+                if (e.getSource() == satuPlayer || e.getSource() == duaPlayer) {
+                    dispose(); // Tutup Beranda
+                    PlayBoard playBoard = new PlayBoard(); // Buka PlayBoard
+                    playBoard.setVisible(true);
                 } else if (e.getSource() == help) {
-                    new JFrame("Help");
+                    new JFrame("Help").setVisible(true);
                 } else if (e.getSource() == exit) {
                     System.exit(0);
                 }
@@ -70,7 +65,7 @@ public class Beranda extends JFrame {
         hoverButton(topScore, Color.BLUE, Color.WHITE);
         hoverButton(help, Color.BLUE, Color.WHITE);
         hoverButton(exit, Color.RED, Color.WHITE);
-        
+
         buttonPanel.add(satuPlayer);
         buttonPanel.add(duaPlayer);
         buttonPanel.add(topScore);
@@ -81,36 +76,35 @@ public class Beranda extends JFrame {
         backgroundPanel.add(buttonPanel, BorderLayout.CENTER);
         add(backgroundPanel, BorderLayout.CENTER);
     }
-        
 
-    public JButton createButtonMenu(String text, int widht, int height) {
+    public JButton createButtonMenu(String text, int width, int height) {
         JButton playerButton = new JButton();
-               
+
         playerButton.setBorder(BorderFactory.createEmptyBorder());
         playerButton.setLayout(new BorderLayout());
         playerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        playerButton.setMaximumSize(new Dimension(widht, height));
-        playerButton.setPreferredSize(new Dimension(widht, height));
+        playerButton.setMaximumSize(new Dimension(width, height));
+        playerButton.setPreferredSize(new Dimension(width, height));
         playerButton.setContentAreaFilled(false);
 
         JLabel label = new JLabel(text, SwingConstants.CENTER);
         label.setFont(new Font("Bebas Neue", Font.BOLD, 60));
         label.setForeground(Color.WHITE);
-        
+
         playerButton.add(label, BorderLayout.CENTER);
         return playerButton;
     }
 
     private void hoverButton(JButton button, Color hoverColor, Color defaultColor) {
-        button.addMouseListener(new MouseAdapter() {
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
-            public void mouseEntered(MouseEvent e) {
+            public void mouseEntered(java.awt.event.MouseEvent e) {
                 button.getComponent(0).setForeground(hoverColor);
                 button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             }
 
             @Override
-            public void mouseExited(MouseEvent e) {
+            public void mouseExited(java.awt.event.MouseEvent e) {
                 button.getComponent(0).setForeground(defaultColor);
             }
         });
