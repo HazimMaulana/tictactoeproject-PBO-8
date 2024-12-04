@@ -2,9 +2,11 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.*;
+import java.sql.*;
 
 public class SatuPlayer extends JFrame {
     private Image backgroundImage;
+
     public SatuPlayer() {
         setTitle("1 Player");
         setSize(1440, 900);
@@ -79,10 +81,17 @@ public class SatuPlayer extends JFrame {
         startButton.addActionListener(e -> {
             String playerName = namePlayer.getText().trim();
             String selectedTime = (String) timePlay.getSelectedItem();
+
             if (playerName.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please enter your name!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "Player: " + playerName + "\nTime: " + selectedTime + " minutes");
+                try {
+                    updateDatabase(playerName);
+                    JOptionPane.showMessageDialog(this, "Player: " + playerName + "\nTime: " + selectedTime + " seconds");
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
@@ -98,7 +107,7 @@ public class SatuPlayer extends JFrame {
         inputPanel.add(namaLabel);
         inputPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         inputPanel.add(namePlayer);
-        inputPanel.add(Box.createRigidArea(new Dimension(0,20)));
+        inputPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         inputPanel.add(timeLabel);
         inputPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         inputPanel.add(timePlay);
@@ -112,7 +121,35 @@ public class SatuPlayer extends JFrame {
         add(backgroundPanel, BorderLayout.CENTER);
     }
 
-     private void hoverButton(JButton button) {
+    private void updateDatabase(String playerName) throws SQLException {
+        String dbUrl = "jdbc:mysql://localhost:3306/db_tictactoe";
+        String dbUser = "root";
+        String dbPassword = "";
+
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
+            String checkQuery = "SELECT wins FROM players WHERE name = ?";
+            PreparedStatement checkStmt = connection.prepareStatement(checkQuery);
+            checkStmt.setString(1, playerName);
+
+            ResultSet resultSet = checkStmt.executeQuery();
+            if (resultSet.next()) {
+                int currentWins = resultSet.getInt("wins");
+                String updateQuery = "UPDATE players SET wins = ? WHERE name = ?";
+                PreparedStatement updateStmt = connection.prepareStatement(updateQuery);
+                updateStmt.setInt(1, currentWins + 1);
+                updateStmt.setString(2, playerName);
+                updateStmt.executeUpdate();
+            } else {
+                String insertQuery = "INSERT INTO players (name, wins) VALUES (?, ?)";
+                PreparedStatement insertStmt = connection.prepareStatement(insertQuery);
+                insertStmt.setString(1, playerName);
+                insertStmt.setInt(2, 1);
+                insertStmt.executeUpdate();
+            }
+        }
+    }
+
+    private void hoverButton(JButton button) {
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -120,4 +157,6 @@ public class SatuPlayer extends JFrame {
             }
         });
     }
+
+
 }

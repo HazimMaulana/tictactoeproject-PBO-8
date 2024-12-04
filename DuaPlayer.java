@@ -1,6 +1,11 @@
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.awt.*;
 
 public class DuaPlayer extends JFrame {
@@ -90,14 +95,33 @@ public class DuaPlayer extends JFrame {
             String playerName1 = namePlayer1.getText().trim();
             String playerName2 = namePlayer2.getText().trim();
             String selectedTime = (String) timePlay.getSelectedItem();
+        
             if (playerName1.isEmpty() && playerName2.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please enter your name!", "Error", JOptionPane.ERROR_MESSAGE);
-            } else if(playerName1.isEmpty()) {
+            } else if (playerName1.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please enter player 1 name!", "Error", JOptionPane.ERROR_MESSAGE);
             } else if (playerName2.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please enter player 2 name!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                // JOptionPane.showMessageDialog(this, "Player: " + playerName + "\nTime: " + selectedTime + " minutes");
+                try {
+                    updateDatabase(playerName1);
+                    updateDatabase(playerName2);
+
+                    System.out.println("Player 1: " + playerName1);
+                    System.out.println("Player 2: " + playerName2);
+                    System.out.println("Play Time: " + selectedTime + " seconds");
+            
+                    JOptionPane.showMessageDialog(this, 
+                        "Player 1: " + playerName1 + "\nPlayer 2: " + playerName2 + "\nPlay Time: " + selectedTime + " seconds",
+                        "Game Info",
+                        JOptionPane.INFORMATION_MESSAGE
+                    );
+            
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
             }
         });
 
@@ -131,7 +155,35 @@ public class DuaPlayer extends JFrame {
         add(backgroundPanel, BorderLayout.CENTER);
     }
 
-     private void hoverButton(JButton button) {
+    private void updateDatabase(String playerName) throws SQLException {
+        String dbUrl = "jdbc:mysql://localhost:3306/db_tictactoe";
+        String dbUser = "root";
+        String dbPassword = "";
+
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
+            String checkQuery = "SELECT wins FROM players WHERE name = ?";
+            PreparedStatement checkStmt = connection.prepareStatement(checkQuery);
+            checkStmt.setString(1, playerName);
+
+            ResultSet resultSet = checkStmt.executeQuery();
+            if (resultSet.next()) {
+                int currentWins = resultSet.getInt("wins");
+                String updateQuery = "UPDATE players SET wins = ? WHERE name = ?";
+                PreparedStatement updateStmt = connection.prepareStatement(updateQuery);
+                updateStmt.setInt(1, currentWins + 1);
+                updateStmt.setString(2, playerName);
+                updateStmt.executeUpdate();
+            } else {
+                String insertQuery = "INSERT INTO players (name, wins) VALUES (?, ?)";
+                PreparedStatement insertStmt = connection.prepareStatement(insertQuery);
+                insertStmt.setString(1, playerName);
+                insertStmt.setInt(2, 1);
+                insertStmt.executeUpdate();
+            }
+        }
+    }
+
+    private void hoverButton(JButton button) {
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
