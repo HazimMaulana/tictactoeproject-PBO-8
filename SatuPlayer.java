@@ -143,7 +143,7 @@ public class SatuPlayer extends JFrame {
                 String insertQuery = "INSERT INTO players (name, wins) VALUES (?, ?)";
                 PreparedStatement insertStmt = connection.prepareStatement(insertQuery);
                 insertStmt.setString(1, playerName);
-                insertStmt.setInt(2, 1); // Default wins = 1
+                insertStmt.setInt(2, 1);
                 insertStmt.executeUpdate();
             }
         }

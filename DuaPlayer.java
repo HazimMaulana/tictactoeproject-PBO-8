@@ -106,12 +106,11 @@ public class DuaPlayer extends JFrame {
                 try {
                     updateDatabase(playerName1);
                     updateDatabase(playerName2);
-                    // Menampilkan informasi nama pemain dan waktu ke konsol
+
                     System.out.println("Player 1: " + playerName1);
                     System.out.println("Player 2: " + playerName2);
                     System.out.println("Play Time: " + selectedTime + " seconds");
             
-                    // Menampilkan informasi melalui JOptionPane
                     JOptionPane.showMessageDialog(this, 
                         "Player 1: " + playerName1 + "\nPlayer 2: " + playerName2 + "\nPlay Time: " + selectedTime + " seconds",
                         "Game Info",
@@ -123,8 +122,6 @@ public class DuaPlayer extends JFrame {
                     JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
 
-                
-        
             }
         });
 
@@ -180,7 +177,7 @@ public class DuaPlayer extends JFrame {
                 String insertQuery = "INSERT INTO players (name, wins) VALUES (?, ?)";
                 PreparedStatement insertStmt = connection.prepareStatement(insertQuery);
                 insertStmt.setString(1, playerName);
-                insertStmt.setInt(2, 1); // Default wins = 1
+                insertStmt.setInt(2, 1);
                 insertStmt.executeUpdate();
             }
         }
