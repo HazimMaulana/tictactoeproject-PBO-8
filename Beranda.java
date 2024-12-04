@@ -51,6 +51,10 @@ public class Beranda extends JFrame {
                     dispose();
                     DuaPlayer duaP = new DuaPlayer();
                     duaP.setVisible(true);
+                } else if (e.getSource() == topScore) {
+                    dispose();
+                    TopScore topS = new TopScore();
+                    topS.setVisible(true);
                 } else if (e.getSource() == help) {
                     new JFrame("Help");
                 } else if (e.getSource() == exit) {
