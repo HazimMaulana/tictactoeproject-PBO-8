@@ -6,8 +6,8 @@ import java.awt.event.ActionListener;
 public class PlayBoard extends JFrame {
     private Image backgroundImage;
     private JLabel timerLabel;
-    private int timeLeft = 300; 
-    private Timer timer; 
+    private int timeLeft = 300;
+    private Timer timer;
 
     public PlayBoard() {
         setTitle("Tic Tac Toe");
@@ -27,10 +27,10 @@ public class PlayBoard extends JFrame {
 
         timerLabel = new JLabel("05:00", SwingConstants.CENTER);
         timerLabel.setFont(new Font("Arial", Font.BOLD, 36));
-        timerLabel.setForeground(Color.WHITE);
+        timerLabel.setForeground(Color.GRAY);
 
         JPanel timerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        timerPanel.setOpaque(false); 
+        // timerPanel.setOpaque(true);
         timerPanel.add(timerLabel);
 
         startTimer();
@@ -59,7 +59,7 @@ public class PlayBoard extends JFrame {
         }
 
         backgroundPanel.add(gridContainer);
-        add(timerPanel, BorderLayout.NORTH); 
+        add(timerPanel, BorderLayout.NORTH);
         add(backgroundPanel, BorderLayout.CENTER);
     }
 
@@ -69,7 +69,7 @@ public class PlayBoard extends JFrame {
             public void run() {
                 while (timeLeft > 0) {
                     try {
-                        Thread.sleep(1000); 
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -87,7 +87,7 @@ public class PlayBoard extends JFrame {
             }
         });
 
-        timerThread.start(); 
+        timerThread.start();
     }
 
     public static void main(String[] args) {
