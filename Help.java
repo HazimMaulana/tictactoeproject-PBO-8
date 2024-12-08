@@ -11,7 +11,7 @@ public class Help extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        backgroundImage = Toolkit.getDefaultToolkit().getImage("image/background.jpg");
+        backgroundImage = Toolkit.getDefaultToolkit().getImage("image/BG.png");
         JPanel backgroundPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
