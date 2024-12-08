@@ -56,7 +56,9 @@ public class Beranda extends JFrame {
                     TopScore topS = new TopScore();
                     topS.setVisible(true);
                 } else if (e.getSource() == help) {
-                    new JFrame("Help");
+                    dispose();
+                    Help help = new Help();
+                    help.setVisible(true);
                 } else if (e.getSource() == exit) {
                     System.exit(0);
                 }
