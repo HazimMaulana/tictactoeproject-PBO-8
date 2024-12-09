@@ -12,7 +12,7 @@ public class Beranda extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        backgroundImage = Toolkit.getDefaultToolkit().getImage("image/background.jpg");
+        backgroundImage = Toolkit.getDefaultToolkit().getImage("image/BG.png");
         JPanel backgroundPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -22,7 +22,7 @@ public class Beranda extends JFrame {
         };
 
         backgroundPanel.setLayout(new BorderLayout());
-        backgroundPanel.setBorder(BorderFactory.createEmptyBorder(30, 20, 10, 20));
+        backgroundPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         JLabel titleLabel = new JLabel("TIC TAC TOE", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Bebas Neue", Font.BOLD, 100));
         titleLabel.setForeground(new Color(255, 255, 255));
@@ -30,7 +30,7 @@ public class Beranda extends JFrame {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.add(Box.createRigidArea(new Dimension(0, 130)));
+        buttonPanel.add(Box.createRigidArea(new Dimension(0,75)));
         buttonPanel.setOpaque(false);
 
         JButton satuPlayer = createButtonMenu("1 PLAYER", 300, 70);
@@ -47,7 +47,9 @@ public class Beranda extends JFrame {
                     PlayBoard playBoard = new PlayBoard(); // Buka PlayBoard
                     playBoard.setVisible(true);
                 } else if (e.getSource() == help) {
-                    new JFrame("Help").setVisible(true);
+                    dispose();
+                    Help help = new Help();
+                    help.setVisible(true);
                 } else if (e.getSource() == exit) {
                     System.exit(0);
                 }
