@@ -3,13 +3,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Beranda extends JFrame {
+class Beranda extends JPanel {
     private Image backgroundImage;
 
-    public Beranda() {
-        setTitle("Tic Tac Toe");
-        setSize(1440, 900);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public Beranda(MainFrame mainFrame) {
         setLayout(new BorderLayout());
 
         backgroundImage = Toolkit.getDefaultToolkit().getImage("image/BG.png");
@@ -30,7 +27,7 @@ public class Beranda extends JFrame {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.add(Box.createRigidArea(new Dimension(0,75)));
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 75)));
         buttonPanel.setOpaque(false);
 
         JButton satuPlayer = createButtonMenu("1 PLAYER", 300, 70);
@@ -42,14 +39,13 @@ public class Beranda extends JFrame {
         ActionListener ActionMenu = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == satuPlayer || e.getSource() == duaPlayer) {
-                    dispose(); // Tutup Beranda
-                    PlayBoard playBoard = new PlayBoard(); // Buka PlayBoard
-                    playBoard.setVisible(true);
+                if (e.getSource() == satuPlayer) {
+                    mainFrame.switchToScreen("playboard");
+                } else if (e.getSource() == duaPlayer) {
+                    mainFrame.switchToScreen("duaPlayerFrame");
+                    // JOptionPane.showMessageDialog(mainFrame, "Mode 2 Player belum tersedia.", "Info", JOptionPane.INFORMATION_MESSAGE);
                 } else if (e.getSource() == help) {
-                    dispose();
-                    Help help = new Help();
-                    help.setVisible(true);
+                    JOptionPane.showMessageDialog(mainFrame, "Bantuan akan ditambahkan nanti.", "Help", JOptionPane.INFORMATION_MESSAGE);
                 } else if (e.getSource() == exit) {
                     System.exit(0);
                 }
@@ -109,13 +105,6 @@ public class Beranda extends JFrame {
             public void mouseExited(java.awt.event.MouseEvent e) {
                 button.getComponent(0).setForeground(defaultColor);
             }
-        });
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            Beranda homePage = new Beranda();
-            homePage.setVisible(true);
         });
     }
 }

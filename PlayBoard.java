@@ -2,20 +2,28 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import javax.swing.border.EmptyBorder;
 
-public class PlayBoard extends JFrame {
+public class PlayBoard extends JPanel {
     private Image backgroundImage;
     private JLabel timerLabel;
-    private int timeLeft = 300;
-    private JButton[][] buttons = new JButton[3][3]; // Grid untuk menyimpan tombol
-    private boolean isXTurn = true; // Menentukan giliran pemain
+    private int timeLeft = 30;
+    private JButton[][] buttons = new JButton[3][3];
+    private boolean isXTurn = true;
+    private boolean isTimerStarted = false;
 
-    public PlayBoard() {
-        setTitle("Tic Tac Toe");
-        setSize(1440, 900);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public PlayBoard(MainFrame mainFrame, String name1, String name2, String time) {
+        setLayout(new BorderLayout());
 
-        backgroundImage = Toolkit.getDefaultToolkit().getImage("image/background.jpg");
+        // setTitle("Tic Tac Toe");
+        // setSize(1440, 900);
+        // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        mainFrame.playData(name1, name2, time);
+        mainFrame.switchToScreen("playboard");
+
+        backgroundImage = Toolkit.getDefaultToolkit().getImage("image/play-board.jpg");
         JPanel backgroundPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -23,14 +31,19 @@ public class PlayBoard extends JFrame {
                 g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
             }
         };
-        backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.Y_AXIS));
+        backgroundPanel.setLayout(new BorderLayout());
 
-        timerLabel = new JLabel("05:00", SwingConstants.CENTER);
+        JPanel timerPanel = new RoundedPanel(Color.GRAY, 20); // Warna abu-abu dan radius 20
+        timerPanel.setLayout(new BorderLayout());
+        timerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        timerLabel = new JLabel("00:30", SwingConstants.CENTER);
         timerLabel.setFont(new Font("Arial", Font.BOLD, 36));
-        timerLabel.setForeground(Color.GRAY);
-        timerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        timerLabel.setForeground(Color.WHITE);
+        timerLabel.setOpaque(false); // Tidak perlu latar belakang, karena sudah diatur di panel
+        timerPanel.add(timerLabel, BorderLayout.CENTER);
 
-        startTimer();
+        // startTimer();
 
         JPanel gridContainer = new JPanel();
         gridContainer.setOpaque(false);
@@ -50,7 +63,13 @@ public class PlayBoard extends JFrame {
                 button.addActionListener(e -> {
                     if (button.getText().isEmpty()) {
                         button.setText(isXTurn ? "X" : "O");
-                        isXTurn = !isXTurn; // Beralih giliran
+                        isXTurn = !isXTurn;
+
+                        if (!isTimerStarted) {
+                            isTimerStarted = true;
+                            startTimer();
+                        }
+
                         if (checkWinCondition(finalRow, finalCol)) {
                             String winner = button.getText();
                             JOptionPane.showMessageDialog(this, winner + " menang!", "Game Over",
@@ -60,6 +79,7 @@ public class PlayBoard extends JFrame {
                             JOptionPane.showMessageDialog(this, "Permainan Seri!", "Game Over",
                                     JOptionPane.INFORMATION_MESSAGE);
                             resetGame();
+                            isTimerStarted = false;
                         }
                     }
                 });
@@ -73,12 +93,54 @@ public class PlayBoard extends JFrame {
         gridWrapper.setOpaque(false);
         gridWrapper.add(gridContainer);
 
-        backgroundPanel.add(Box.createVerticalStrut(getHeight() / 2 - 200));
-        backgroundPanel.add(timerLabel);
-        backgroundPanel.add(Box.createVerticalStrut(20));
-        backgroundPanel.add(gridWrapper);
+        JPanel profile = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        ImageIcon profilePict = new ImageIcon("image/profile.png");
+        Image scaledProfileImage = scaleImage(profilePict.getImage(), 130, 130);
+        profilePict = new ImageIcon(scaledProfileImage);
 
-        add(backgroundPanel);
+        JLabel profileLabel = new JLabel(profilePict);
+
+        JPanel profilName = new RoundedPanel(Color.decode("#D9D9D9"), 10);
+        profilName.setPreferredSize(new Dimension(150, 50));
+        JLabel labelProfile = new JLabel("Aldi");
+        profilName.setBorder(new EmptyBorder(10, 0, 0, 0));
+        profilName.setOpaque(false);
+        profilName.add(labelProfile);
+
+        JPanel profilePanel = new JPanel(new BorderLayout());
+        profilePanel.setOpaque(false);
+        profilePanel.add(profileLabel, BorderLayout.NORTH);
+        profilePanel.add(Box.createVerticalStrut(10));
+        profilePanel.add(profilName, BorderLayout.SOUTH);
+        profilePanel.setBorder(new EmptyBorder(0, 0, 0, 300));
+
+        JLabel profileLabel1 = new JLabel(profilePict);
+
+        JPanel profilName1 = new RoundedPanel(Color.decode("#D9D9D9"), 10);
+        profilName1.setPreferredSize(new Dimension(150, 50));
+        profilName1.setBorder(new EmptyBorder(10, 0, 0, 0));
+        JLabel labelProfile1 = new JLabel("Aldi");
+        profilName1.setOpaque(false);
+        profilName1.add(labelProfile1);
+
+        JPanel profilePanel1 = new JPanel(new BorderLayout());
+        profilePanel1.setOpaque(false);
+        profilePanel1.add(profileLabel1, BorderLayout.NORTH);
+        profilePanel1.add(Box.createVerticalStrut(10));
+        profilePanel1.add(profilName1, BorderLayout.SOUTH);
+        profilePanel1.setBorder(new EmptyBorder(0, 300, 0, 0));
+
+        profile.setOpaque(false);
+        profile.setLayout(new FlowLayout());
+        profile.add(profilePanel, BorderLayout.WEST);
+        profile.add(timerPanel, BorderLayout.SOUTH);
+        profile.add(profilePanel1, BorderLayout.EAST);
+
+        backgroundPanel.setBorder(new EmptyBorder(100, 0, 150, 0));
+        backgroundPanel.add(profile, BorderLayout.NORTH);
+        backgroundPanel.add(gridWrapper, BorderLayout.SOUTH);
+
+        add(backgroundPanel, BorderLayout.CENTER);
     }
 
     private void startTimer() {
@@ -108,29 +170,26 @@ public class PlayBoard extends JFrame {
 
     private boolean checkWinCondition(int row, int col) {
         String player = buttons[row][col].getText();
+        // startTimer();
 
-        // Cek baris
         if (buttons[row][0].getText().equals(player) &&
                 buttons[row][1].getText().equals(player) &&
                 buttons[row][2].getText().equals(player)) {
             return true;
         }
 
-        // Cek kolom
         if (buttons[0][col].getText().equals(player) &&
                 buttons[1][col].getText().equals(player) &&
                 buttons[2][col].getText().equals(player)) {
             return true;
         }
 
-        // Cek diagonal utama
         if (buttons[0][0].getText().equals(player) &&
                 buttons[1][1].getText().equals(player) &&
                 buttons[2][2].getText().equals(player)) {
             return true;
         }
 
-        // Cek diagonal sekunder
         if (buttons[0][2].getText().equals(player) &&
                 buttons[1][1].getText().equals(player) &&
                 buttons[2][0].getText().equals(player)) {
@@ -158,14 +217,25 @@ public class PlayBoard extends JFrame {
             }
         }
         isXTurn = true;
-        timeLeft = 300;
-        timerLabel.setText("05:00");
+        timeLeft = 30;
+        timerLabel.setText("00:30");
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            PlayBoard playBoard = new PlayBoard();
-            playBoard.setVisible(true);
-        });
+    private Image scaleImage(Image image, int width, int height) {
+        BufferedImage scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = scaledImage.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.drawImage(image, 0, 0, width, height, null);
+        g2d.dispose();
+        return scaledImage;
     }
+
+    // public static void main(String[] args) {
+    // SwingUtilities.invokeLater(() -> {
+    // PlayBoard playBoard = new PlayBoard();
+    // playBoard.setVisible(true);
+    // });
+    // }
 }
