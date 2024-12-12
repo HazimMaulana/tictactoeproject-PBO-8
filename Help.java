@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class Help extends JFrame {
     private Image backgroundImage;
-    public Help() {
+    public Help(MainFrame mainFrame) {
         setTitle("Help");
         setSize(1440, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -68,9 +68,7 @@ public class Help extends JFrame {
         buttonSelect.add(backButton);
 
         backButton.addActionListener(e -> {
-            dispose();
-            Beranda beranda = new Beranda();
-            beranda.setVisible(true);
+            mainFrame.switchToScreen("beranda");
         });
 
         hoverButton(backButton);

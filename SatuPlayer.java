@@ -96,9 +96,7 @@ public class SatuPlayer extends JFrame {
         });
 
         backButton.addActionListener(e -> {
-            dispose();
-            Beranda beranda = new Beranda();
-            beranda.setVisible(true);
+            
         });
 
         hoverButton(backButton);

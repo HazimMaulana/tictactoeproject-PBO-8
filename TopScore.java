@@ -7,7 +7,7 @@ import java.sql.*;
 public class TopScore extends JFrame {
     private Image backgroundImage;
 
-    public TopScore() {
+    public TopScore(MainFrame mainFrame) {
         setTitle("TOP SCORE");
         setSize(1440, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -64,9 +64,7 @@ public class TopScore extends JFrame {
         backButton.setForeground(Color.WHITE);
 
         backButton.addActionListener(e -> {
-            dispose();
-            Beranda beranda = new Beranda(); 
-            beranda.setVisible(true);
+            mainFrame.switchToScreen("beranda");
         });
 
         hoverButton(backButton);

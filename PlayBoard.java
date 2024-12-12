@@ -12,13 +12,15 @@ public class PlayBoard extends JPanel {
     private JButton[][] buttons = new JButton[3][3];
     private boolean isXTurn = true;
     private boolean isTimerStarted = false;
+    private String name;
+
+    public void setName1(String name1){
+        this.name = name1;
+    }
 
     public PlayBoard(MainFrame mainFrame, String name1, String name2, String time) {
         setLayout(new BorderLayout());
-
-        // setTitle("Tic Tac Toe");
-        // setSize(1440, 900);
-        // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.name = name1;
 
         mainFrame.playData(name1, name2, time);
         mainFrame.switchToScreen("playboard");
@@ -33,17 +35,14 @@ public class PlayBoard extends JPanel {
         };
         backgroundPanel.setLayout(new BorderLayout());
 
-        JPanel timerPanel = new RoundedPanel(Color.GRAY, 20); // Warna abu-abu dan radius 20
-        timerPanel.setLayout(new BorderLayout());
+        JPanel timerPanel = new RoundedPanel(Color.GRAY, 20); 
         timerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         timerLabel = new JLabel("00:30", SwingConstants.CENTER);
         timerLabel.setFont(new Font("Arial", Font.BOLD, 36));
         timerLabel.setForeground(Color.WHITE);
-        timerLabel.setOpaque(false); // Tidak perlu latar belakang, karena sudah diatur di panel
+        timerLabel.setOpaque(false); 
         timerPanel.add(timerLabel, BorderLayout.CENTER);
-
-        // startTimer();
 
         JPanel gridContainer = new JPanel();
         gridContainer.setOpaque(false);
@@ -99,10 +98,14 @@ public class PlayBoard extends JPanel {
         profilePict = new ImageIcon(scaledProfileImage);
 
         JLabel profileLabel = new JLabel(profilePict);
-
+        
+        DBCon dbCon = new DBCon();
+        // String realName = dbCon.getName1();
+        System.out.println(name);
         JPanel profilName = new RoundedPanel(Color.decode("#D9D9D9"), 10);
         profilName.setPreferredSize(new Dimension(150, 50));
-        JLabel labelProfile = new JLabel("Aldi");
+        JLabel labelProfile = new JLabel(name);
+        labelProfile.setForeground(Color.BLACK);
         profilName.setBorder(new EmptyBorder(10, 0, 0, 0));
         profilName.setOpaque(false);
         profilName.add(labelProfile);
@@ -119,7 +122,7 @@ public class PlayBoard extends JPanel {
         JPanel profilName1 = new RoundedPanel(Color.decode("#D9D9D9"), 10);
         profilName1.setPreferredSize(new Dimension(150, 50));
         profilName1.setBorder(new EmptyBorder(10, 0, 0, 0));
-        JLabel labelProfile1 = new JLabel("Aldi");
+        JLabel labelProfile1 = new JLabel(name);
         profilName1.setOpaque(false);
         profilName1.add(labelProfile1);
 
@@ -170,7 +173,6 @@ public class PlayBoard extends JPanel {
 
     private boolean checkWinCondition(int row, int col) {
         String player = buttons[row][col].getText();
-        // startTimer();
 
         if (buttons[row][0].getText().equals(player) &&
                 buttons[row][1].getText().equals(player) &&
