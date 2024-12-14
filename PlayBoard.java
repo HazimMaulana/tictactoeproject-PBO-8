@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.sql.SQLException;
+
 import javax.swing.border.EmptyBorder;
 
 public class PlayBoard extends JPanel {
@@ -15,11 +17,11 @@ public class PlayBoard extends JPanel {
     private String name, name1, name2;
     private JLabel playerName1, playerName2;
 
-    public void setName1(String name1){
+    public void setName1(String name1) {
         this.name = name1;
     }
 
-    public void updateMatchData (String name1, String name2,  int time){
+    public void updateMatchData(String name1, String name2, int time) {
         playerName1.setText(name1);
         playerName2.setText(name2);
     }
@@ -27,6 +29,7 @@ public class PlayBoard extends JPanel {
     public PlayBoard(MainFrame mainFrame, String name1, String name2, String time) {
         setLayout(new BorderLayout());
         this.name = name1;
+        DBCon dbCon = new DBCon();
 
         mainFrame.playData(name1, name2, time);
         mainFrame.switchToScreen("playboard");
@@ -41,20 +44,20 @@ public class PlayBoard extends JPanel {
         };
         backgroundPanel.setLayout(new BorderLayout());
 
-        JPanel timerPanel = new RoundedPanel(Color.GRAY, 20); 
+        JPanel timerPanel = new RoundedPanel(Color.GRAY, 20);
         timerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         timerLabel = new JLabel("00:30", SwingConstants.CENTER);
         timerLabel.setFont(new Font("Arial", Font.BOLD, 36));
         timerLabel.setForeground(Color.WHITE);
-        timerLabel.setOpaque(false); 
+        timerLabel.setOpaque(false);
         timerPanel.add(timerLabel, BorderLayout.CENTER);
 
         JPanel gridContainer = new JPanel();
         gridContainer.setOpaque(false);
         gridContainer.setLayout(new GridLayout(3, 3, 10, 10));
 
-        int index = 0; // index untuk setiap kotak
+        int index = 0;
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 JButton button = new JButton();
@@ -64,7 +67,6 @@ public class PlayBoard extends JPanel {
                 button.setFocusPainted(false);
                 button.setBorderPainted(false);
 
-                // Menyimpan indeks unik sebagai properti tombol
                 button.putClientProperty("index", index);
 
                 int finalRow = row;
@@ -83,6 +85,19 @@ public class PlayBoard extends JPanel {
                             String winner = button.getText();
                             JOptionPane.showMessageDialog(this, winner + " menang!", "Game Over",
                                     JOptionPane.INFORMATION_MESSAGE);
+                            if (winner.equals("X")) {
+                                try {
+                                    dbCon.updateDatabase(playerName1.getText());
+                                } catch (SQLException e1) {
+                                    e1.printStackTrace();
+                                }
+                            } else {
+                                try {
+                                    dbCon.updateDatabase(playerName2.getText());
+                                } catch (SQLException e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
                             resetGame();
                         } else if (isBoardFull()) {
                             JOptionPane.showMessageDialog(this, "Permainan Seri!", "Game Over",
@@ -94,7 +109,7 @@ public class PlayBoard extends JPanel {
                 });
                 buttons[row][col] = button;
                 gridContainer.add(button);
-                index++; // Increment index untuk kotak berikutnya
+                index++;
             }
         }
 
@@ -109,9 +124,7 @@ public class PlayBoard extends JPanel {
         profilePict = new ImageIcon(scaledProfileImage);
 
         JLabel profileLabel = new JLabel(profilePict);
-        
-        DBCon dbCon = new DBCon();
-        // String realName = dbCon.getName1();
+
         System.out.println(name);
         JPanel profilName = new RoundedPanel(Color.decode("#D9D9D9"), 10);
         profilName.setPreferredSize(new Dimension(150, 50));
@@ -141,7 +154,6 @@ public class PlayBoard extends JPanel {
         labelProfile1.setForeground(Color.BLACK);
         profilName1.setOpaque(false);
         profilName1.add(labelProfile1);
-        
 
         JPanel profilePanel1 = new JPanel(new BorderLayout());
         profilePanel1.setOpaque(false);
@@ -250,11 +262,4 @@ public class PlayBoard extends JPanel {
         g2d.dispose();
         return scaledImage;
     }
-
-    // public static void main(String[] args) {
-    // SwingUtilities.invokeLater(() -> {
-    // PlayBoard playBoard = new PlayBoard();
-    // playBoard.setVisible(true);
-    // });
-    // }
 }

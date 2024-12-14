@@ -16,6 +16,36 @@ public class DBCon {
         return DriverManager.getConnection(url, username, password);
     }
 
+    public void addToDb(String playerName) throws SQLException {
+        String dbUrl = "jdbc:mysql://localhost:3306/db_tictactoe";
+        String dbUser = "root";
+        String dbPassword = "";
+    
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
+            // Cek apakah pemain sudah ada dalam database
+            String checkQuery = "SELECT name FROM players WHERE name = ?";
+            PreparedStatement checkStmt = connection.prepareStatement(checkQuery);
+            checkStmt.setString(1, playerName);
+            
+            ResultSet resultSet = checkStmt.executeQuery();
+            if (!resultSet.next()) {
+                // Jika pemain belum ada, tambahkan ke dalam database
+                String insertQuery = "INSERT INTO players (name, wins) VALUES (?, ?)";
+                PreparedStatement insertStmt = connection.prepareStatement(insertQuery);
+                insertStmt.setString(1, playerName);
+                insertStmt.setInt(2, 0); // Set wins awal sebagai 0
+                insertStmt.executeUpdate();
+                System.out.println("Pemain baru ditambahkan: " + playerName);
+            } else {
+                System.out.println("Pemain sudah ada: " + playerName);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new SQLException("Error saat menambahkan pemain ke database", ex);
+        }
+    }
+    
+
     // Method untuk memulai permainan
     public void start(MainFrame mainFrame, String playerName1, String playerName2, String selectedTime) throws SQLException {
         try {
@@ -58,7 +88,7 @@ public class DBCon {
     }
 
     // Method untuk memperbarui database dengan pemain baru atau skor
-    private void updateDatabase(String playerName) throws SQLException {
+    public void updateDatabase(String playerName) throws SQLException {
         String queryCheck = "SELECT wins FROM players WHERE name = ?";
         String queryInsert = "INSERT INTO players (name, wins) VALUES (?, 0)";
         String queryUpdate = "UPDATE players SET wins = wins + 1 WHERE name = ?";
@@ -96,14 +126,5 @@ public class DBCon {
             }
         }
         return playerName; // Jika nama tidak ditemukan, kembalikan nama input
-    }
-
-    // Getter untuk nama pemain
-    public String getName1() {
-        return name1;
-    }
-
-    public String getName2() {
-        return name2;
     }
 }

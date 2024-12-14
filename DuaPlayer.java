@@ -101,18 +101,10 @@ public class DuaPlayer extends JPanel {
             } else if (playerName2.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please enter player 2 name!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                DBCon dbCon = new DBCon();
-                try {
-                    
-                    dbCon.start(mainFrame, playerName1, playerName2, selectedTime);
-            
-                    // JOptionPane.showMessageDialog(this, "Player: " + playerName + "\nTime: " + selectedTime + " seconds");
-                    mainFrame.switchToScreen("playboard"); // Ganti dengan layar permainan
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-                // Humanplayer human1 = new Humanplayer(playerName2, ABORT)
+                Humanplayer player1 = new Humanplayer(playerName1);
+                Humanplayer player2 = new Humanplayer(playerName2);
+                PlayBoard play = new PlayBoard(mainFrame, playerName1, playerName2, selectedTime);
+               
             }
         });
 
