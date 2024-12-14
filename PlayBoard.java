@@ -104,6 +104,7 @@ public class PlayBoard extends JPanel {
                                     e1.printStackTrace();
                                 }
                             }
+                            SwingUtilities.invokeLater(() -> backButton.setVisible(true));
                             resetGame();
                             mainFrame.switchToScreen("duaPlayerFrame");
                             

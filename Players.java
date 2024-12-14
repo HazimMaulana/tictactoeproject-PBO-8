@@ -1,4 +1,4 @@
-public abstract class Players{
+public abstract class Players implements Play{
     
     protected String nama;
     protected int wins;

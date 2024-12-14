@@ -104,7 +104,7 @@ public class DuaPlayer extends JPanel {
             } else {
                 Humanplayer player1 = new Humanplayer(playerName1);
                 Humanplayer player2 = new Humanplayer(playerName2);
-                PlayBoard play = new PlayBoard(mainFrame, playerName1, playerName2, selectedTime);
+                player1.play(mainFrame, playerName1, playerName2, selectedTime);
                
             }
         });
