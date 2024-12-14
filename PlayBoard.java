@@ -27,6 +27,7 @@ public class PlayBoard extends JPanel {
         playerName1.setText(name1);
         playerName2.setText(name2);
         playerTime.setText(time);
+        this.timeLeft = Integer.parseInt(time);
     }
 
     public PlayBoard(MainFrame mainFrame, String name1, String name2, String time) {
@@ -103,13 +104,15 @@ public class PlayBoard extends JPanel {
                                     e1.printStackTrace();
                                 }
                             }
+                            resetGame();
                             mainFrame.switchToScreen("duaPlayerFrame");
-                            //resetGame();
+                            
                         } else if (isBoardFull()) {
                             JOptionPane.showMessageDialog(this, "Permainan Seri!", "Game Over",
                                     JOptionPane.INFORMATION_MESSAGE);
+                                    resetGame();
                                     mainFrame.switchToScreen("satuPlayerFrame");
-                                    //resetGame();
+                                    
                             isTimerStarted = false;
                         }
                     }
@@ -197,22 +200,9 @@ public class PlayBoard extends JPanel {
 
     private void startTimer(String time, MainFrame mainFrame) {
         SwingUtilities.invokeLater(() -> backButton.setVisible(false));
-        System.out.println("time passed di startTimer: "+time);
+        //System.out.println("time passed di startTimer: "+time);
         Thread timerThread = new Thread(() -> {
-            if (time == "30"){
-                timeLeft = 30;
-            }else if(time == "45"){
-                timeLeft = 45;
-            }else if(time == "60"){
-                timeLeft = 60;
-            }else if(time == "90"){
-                timeLeft = 90;
-            }else if(time == "120"){
-                timeLeft = 120;
-            }else {
-                System.out.println("TimeLeft di startTimer: "+timeLeft);
-                System.out.println("Input Waktu Invalid!");
-            }
+            
             while (timeLeft > 0) {
                 try {
                     Thread.sleep(1000);
@@ -230,7 +220,7 @@ public class PlayBoard extends JPanel {
             SwingUtilities.invokeLater(() -> {
                 JOptionPane.showMessageDialog(null, "Waktu habis!", "Game Over", JOptionPane.WARNING_MESSAGE);
                 mainFrame.switchToScreen("duaPlayerFrame");
-                //resetGame();
+                resetGame();
             });
         });
 
@@ -285,8 +275,8 @@ public class PlayBoard extends JPanel {
             }
         }
         isXTurn = true;
-        timeLeft = 30;
-        timerLabel.setText("00:30");
+        // timeLeft = 30;
+        // timerLabel.setText("00:30");
     }
 
     private Image scaleImage(Image image, int width, int height) {
