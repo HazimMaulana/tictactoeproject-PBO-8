@@ -4,13 +4,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.*;
 
-public class TopScore extends JFrame {
+public class TopScore extends JPanel {
     private Image backgroundImage;
 
     public TopScore(MainFrame mainFrame) {
-        setTitle("TOP SCORE");
-        setSize(1440, 900);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         backgroundImage = Toolkit.getDefaultToolkit().getImage("image/BG.png");
@@ -116,5 +113,5 @@ public class TopScore extends JFrame {
             }
         });
     }
-
+    
 }

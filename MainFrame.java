@@ -17,6 +17,9 @@ public class MainFrame extends JFrame {
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
+        SatuPlayer satuPlayer = new SatuPlayer(this);
+        cardPanel.add(satuPlayer, "satuPlayerFrame");
+
         DuaPlayer duaPlayer = new DuaPlayer(this);
         cardPanel.add(duaPlayer, "duaPlayerFrame");
 
@@ -25,6 +28,12 @@ public class MainFrame extends JFrame {
 
         PlayBoard playBoard = new PlayBoard(this, name1, name2, time);
         cardPanel.add(playBoard, "playboard");
+
+        TopScore topScore = new TopScore(this);
+        cardPanel.add(topScore, "topScore");
+
+        Help help = new Help(this);
+        cardPanel.add(help, "help");
 
         add(cardPanel);
 
@@ -42,6 +51,19 @@ public class MainFrame extends JFrame {
         this.time = time;
     }
 
+    public String getPlayerName1() {
+        return name1;
+    }
+
+    public String getPlayerName2() {
+        return name2;
+    }
+
+    public String getPlayTime() {
+        return time;
+    }
+
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             MainFrame frame = new MainFrame();

@@ -11,26 +11,27 @@ public class DBCon {
     private final String password = "";
     private String name1, name2;
 
+    // Method untuk mendapatkan koneksi database
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(url, username, password);
     }
 
-    public void start(MainFrame mainFrame, String playerName1, String playerName2, String selectedTime) {
-        try {          
-            
+    // Method untuk memulai permainan
+    public void start(MainFrame mainFrame, String playerName1, String playerName2, String selectedTime) throws SQLException {
+        try {
+            // Update pemain ke database
             updateDatabase(playerName1);
             updateDatabase(playerName2);
 
+            // Ambil nama pemain dari database
             String dbPlayerName1 = getPlayerName(playerName1);
             String dbPlayerName2 = getPlayerName(playerName2);
-            
+
+            // Simpan nama pemain untuk referensi
             name1 = dbPlayerName1;
             name2 = dbPlayerName2;
 
-            System.out.println("Player 1: " + dbPlayerName1);
-            System.out.println("Player 2: " + dbPlayerName2);
-            System.out.println("Play Time: " + selectedTime + " seconds");
-
+            // Tampilkan informasi permainan
             JOptionPane.showMessageDialog(
                 null,
                 "Player 1: " + dbPlayerName1 + "\nPlayer 2: " + dbPlayerName2 + "\nPlay Time: " + selectedTime + " seconds",
@@ -38,11 +39,10 @@ public class DBCon {
                 JOptionPane.INFORMATION_MESSAGE
             );
 
-            // Panggil PlayBoard setelah JOptionPane
-            PlayBoard playBoard = new PlayBoard(mainFrame, dbPlayerName1, dbPlayerName2, selectedTime);
-            playBoard.setName(dbPlayerName1);
+            System.out.println("Berhasil simpan nama");
+            
+            
 
-            // playBoard.setVisible(true);    
         } catch (SQLException ex) {
             ex.printStackTrace();
 
@@ -55,38 +55,34 @@ public class DBCon {
         }
     }
 
+    // Method untuk memperbarui database dengan pemain baru atau skor
     private void updateDatabase(String playerName) throws SQLException {
-        String dbUrl = "jdbc:mysql://localhost:3306/db_tictactoe";
-        String dbUser = "root";
-        String dbPassword = "";
+        String queryCheck = "SELECT wins FROM players WHERE name = ?";
+        String queryInsert = "INSERT INTO players (name, wins) VALUES (?, 0)";
+        String queryUpdate = "UPDATE players SET wins = wins + 1 WHERE name = ?";
 
-        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
-            String checkQuery = "SELECT wins FROM players WHERE name = ?";
-            PreparedStatement checkStmt = connection.prepareStatement(checkQuery);
+        try (Connection connection = getConnection()) {
+            PreparedStatement checkStmt = connection.prepareStatement(queryCheck);
             checkStmt.setString(1, playerName);
-
             ResultSet resultSet = checkStmt.executeQuery();
+
             if (resultSet.next()) {
-                int currentWins = resultSet.getInt("wins");
-                String updateQuery = "UPDATE players SET wins = ? WHERE name = ?";
-                PreparedStatement updateStmt = connection.prepareStatement(updateQuery);
-                updateStmt.setInt(1, currentWins + 1);
-                updateStmt.setString(2, playerName);
+                // Jika pemain sudah ada, tingkatkan skor
+                PreparedStatement updateStmt = connection.prepareStatement(queryUpdate);
+                updateStmt.setString(1, playerName);
                 updateStmt.executeUpdate();
             } else {
-                String insertQuery = "INSERT INTO players (name, wins) VALUES (?, ?)";
-                PreparedStatement insertStmt = connection.prepareStatement(insertQuery);
+                // Jika pemain belum ada, tambahkan ke database
+                PreparedStatement insertStmt = connection.prepareStatement(queryInsert);
                 insertStmt.setString(1, playerName);
-                insertStmt.setInt(2, 1);
                 insertStmt.executeUpdate();
             }
         }
     }
 
+    // Method untuk mendapatkan nama pemain dari database
     public String getPlayerName(String playerName) throws SQLException {
-        String retrievedName = null;
         String query = "SELECT name FROM players WHERE name = ?";
-
         try (Connection connection = getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
 
@@ -94,20 +90,18 @@ public class DBCon {
             ResultSet resultSet = stmt.executeQuery();
 
             if (resultSet.next()) {
-                retrievedName = resultSet.getString("name");
+                return resultSet.getString("name");
             }
         }
-
-        return retrievedName != null ? retrievedName : playerName;
+        return playerName; // Jika nama tidak ditemukan, kembalikan nama input
     }
 
-    public String getName1(){
-        // String dbPlayerName1 = getPlayerName(name1);
+    // Getter untuk nama pemain
+    public String getName1() {
         return name1;
     }
 
-    public String getName2(){
-        // String dbPlayerName2 = getPlayerName(name2);
+    public String getName2() {
         return name2;
     }
 }

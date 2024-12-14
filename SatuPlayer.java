@@ -4,13 +4,10 @@ import java.awt.event.MouseEvent;
 import java.awt.*;
 import java.sql.*;
 
-public class SatuPlayer extends JFrame {
+public class SatuPlayer extends JPanel {
     private Image backgroundImage;
 
-    public SatuPlayer() {
-        setTitle("1 Player");
-        setSize(1440, 900);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public SatuPlayer(MainFrame mainFrame) {
         setLayout(new BorderLayout());
 
         backgroundImage = Toolkit.getDefaultToolkit().getImage("image/BG.png");
@@ -28,7 +25,7 @@ public class SatuPlayer extends JFrame {
         titleLabel.setFont(new Font("Bebas Neue", Font.BOLD, 100));
         titleLabel.setForeground(new Color(255, 255, 255));
         titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-    
+
         JPanel wrapPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 120));
         wrapPanel.setOpaque(false);
 
@@ -42,7 +39,7 @@ public class SatuPlayer extends JFrame {
         namaLabel.setFont(new Font("Bebas Neue", Font.BOLD, 24));
         namaLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         namaLabel.setForeground(Color.WHITE);
-        
+
         JTextField namePlayer = new JTextField(30);
         namePlayer.setMaximumSize(new Dimension(300, 40));
         namePlayer.setFont(new Font("Bebas Neue", Font.PLAIN, 20));
@@ -78,25 +75,53 @@ public class SatuPlayer extends JFrame {
         buttonSelect.add(backButton);
         buttonSelect.add(startButton);
 
+        // startButton.addActionListener(e -> {
+        //     String playerName = namePlayer.getText().trim();
+        //     String selectedTime = (String) timePlay.getSelectedItem();
+
+        //     if (playerName.isEmpty()) {
+        //         JOptionPane.showMessageDialog(this, "Please enter your name!", "Error", JOptionPane.ERROR_MESSAGE);
+        //     } else {
+        //         try {
+        //             updateDatabase(playerName);
+        //             JOptionPane.showMessageDialog(this, "Player: " + playerName + "\nTime: " + selectedTime + " seconds");
+        //         } catch (SQLException ex) {
+        //             ex.printStackTrace();
+        //             JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        //         }
+        //     }
+        // });
+
         startButton.addActionListener(e -> {
             String playerName = namePlayer.getText().trim();
             String selectedTime = (String) timePlay.getSelectedItem();
+            DBCon dbcon =  new DBCon();
+            System.out.println("berhasil pencet");
 
             if (playerName.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please enter your name!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                try {
-                    updateDatabase(playerName);
-                    JOptionPane.showMessageDialog(this, "Player: " + playerName + "\nTime: " + selectedTime + " seconds");
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
+                mainFrame.playData(playerName, "bot", selectedTime);
+                mainFrame.switchToScreen("playboard");
+                // try {
+                //     dbcon.start(mainFrame, playerName, "bot",selectedTime);
+                //     mainFrame.playData(playerName, "bot", selectedTime);
+                //     JOptionPane.showMessageDialog(this, "Player: " + playerName + "\nTime: " + selectedTime + " seconds");
+                //     System.out.println("berhasil satuplayer");
+                //     // Beralih ke layar PlayBoard
+                //     // PlayBoard playBoard = new PlayBoard(mainFrame, playerName, "bot", selectedTime);
+                //     mainFrame.switchToScreen("playboard");
+                    
+                // } catch (SQLException ex) {
+                //     ex.printStackTrace();
+                //     System.out.println("gak berhasil satuplayer");
+                //     JOptionPane.showMessageDialog(this, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                // }
             }
         });
 
         backButton.addActionListener(e -> {
-            
+            mainFrame.switchToScreen("beranda");
         });
 
         hoverButton(backButton);
@@ -111,7 +136,7 @@ public class SatuPlayer extends JFrame {
         inputPanel.add(timePlay);
         inputPanel.add(Box.createRigidArea(new Dimension(0, 30)));
         inputPanel.add(buttonSelect);
-        
+
         wrapPanel.add(inputPanel);
 
         backgroundPanel.add(titleLabel, BorderLayout.NORTH);
@@ -119,33 +144,33 @@ public class SatuPlayer extends JFrame {
         add(backgroundPanel, BorderLayout.CENTER);
     }
 
-    private void updateDatabase(String playerName) throws SQLException {
-        String dbUrl = "jdbc:mysql://localhost:3306/db_tictactoe";
-        String dbUser = "root";
-        String dbPassword = "";
+    // private void updateDatabase(String playerName) throws SQLException {
+    //     String dbUrl = "jdbc:mysql://localhost:3306/db_tictactoe";
+    //     String dbUser = "root";
+    //     String dbPassword = "";
 
-        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
-            String checkQuery = "SELECT wins FROM players WHERE name = ?";
-            PreparedStatement checkStmt = connection.prepareStatement(checkQuery);
-            checkStmt.setString(1, playerName);
+    //     try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
+    //         String checkQuery = "SELECT wins FROM players WHERE name = ?";
+    //         PreparedStatement checkStmt = connection.prepareStatement(checkQuery);
+    //         checkStmt.setString(1, playerName);
 
-            ResultSet resultSet = checkStmt.executeQuery();
-            if (resultSet.next()) {
-                int currentWins = resultSet.getInt("wins");
-                String updateQuery = "UPDATE players SET wins = ? WHERE name = ?";
-                PreparedStatement updateStmt = connection.prepareStatement(updateQuery);
-                updateStmt.setInt(1, currentWins + 1);
-                updateStmt.setString(2, playerName);
-                updateStmt.executeUpdate();
-            } else {
-                String insertQuery = "INSERT INTO players (name, wins) VALUES (?, ?)";
-                PreparedStatement insertStmt = connection.prepareStatement(insertQuery);
-                insertStmt.setString(1, playerName);
-                insertStmt.setInt(2, 1);
-                insertStmt.executeUpdate();
-            }
-        }
-    }
+    //         ResultSet resultSet = checkStmt.executeQuery();
+    //         if (resultSet.next()) {
+    //             int currentWins = resultSet.getInt("wins");
+    //             String updateQuery = "UPDATE players SET wins = ? WHERE name = ?";
+    //             PreparedStatement updateStmt = connection.prepareStatement(updateQuery);
+    //             updateStmt.setInt(1, currentWins + 1);
+    //             updateStmt.setString(2, playerName);
+    //             updateStmt.executeUpdate();
+    //         } else {
+    //             String insertQuery = "INSERT INTO players (name, wins) VALUES (?, ?)";
+    //             PreparedStatement insertStmt = connection.prepareStatement(insertQuery);
+    //             insertStmt.setString(1, playerName);
+    //             insertStmt.setInt(2, 1);
+    //             insertStmt.executeUpdate();
+    //         }
+    //     }
+    // }
 
     private void hoverButton(JButton button) {
         button.addMouseListener(new MouseAdapter() {
@@ -155,6 +180,4 @@ public class SatuPlayer extends JFrame {
             }
         });
     }
-
-
 }

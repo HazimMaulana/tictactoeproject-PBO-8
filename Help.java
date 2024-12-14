@@ -3,12 +3,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.*;
 
-public class Help extends JFrame {
+public class Help extends JPanel {
     private Image backgroundImage;
+
     public Help(MainFrame mainFrame) {
-        setTitle("Help");
-        setSize(1440, 900);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         backgroundImage = Toolkit.getDefaultToolkit().getImage("image/BG.png");
@@ -26,7 +24,7 @@ public class Help extends JFrame {
         titleLabel.setFont(new Font("Bebas Neue", Font.BOLD, 100));
         titleLabel.setForeground(new Color(255, 255, 255));
         titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-    
+
         JPanel wrapPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 70));
         wrapPanel.setOpaque(false);
 
@@ -78,7 +76,7 @@ public class Help extends JFrame {
         inputPanel.add(textPanel);
         inputPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         inputPanel.add(buttonSelect);
-        
+
         wrapPanel.add(inputPanel);
 
         backgroundPanel.add(titleLabel, BorderLayout.NORTH);
@@ -86,7 +84,7 @@ public class Help extends JFrame {
         add(backgroundPanel, BorderLayout.CENTER);
     }
 
-     private void hoverButton(JButton button) {
+    private void hoverButton(JButton button) {
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -102,5 +100,4 @@ public class Help extends JFrame {
         label.setAlignmentX(Component.LEFT_ALIGNMENT);
         return label;
     }
-    
 }

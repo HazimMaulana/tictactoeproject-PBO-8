@@ -40,14 +40,14 @@ class Beranda extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == satuPlayer) {
-                    mainFrame.switchToScreen("playboard");
+                    mainFrame.switchToScreen("satuPlayerFrame");
                 } else if (e.getSource() == duaPlayer) {
                     mainFrame.switchToScreen("duaPlayerFrame");
                     // JOptionPane.showMessageDialog(mainFrame, "Mode 2 Player belum tersedia.", "Info", JOptionPane.INFORMATION_MESSAGE);
                 } else if (e.getSource() == topScore) {
-                    mainFrame.switchToScreen("TopScore");
+                    mainFrame.switchToScreen("topScore");
                 } else if (e.getSource() == help) {
-                    JOptionPane.showMessageDialog(mainFrame, "Bantuan akan ditambahkan nanti.", "Help", JOptionPane.INFORMATION_MESSAGE);
+                    mainFrame.switchToScreen("help");
                 } else if (e.getSource() == exit) {
                     System.exit(0);
                 }
