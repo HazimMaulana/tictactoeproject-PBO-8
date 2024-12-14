@@ -1,11 +1,11 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.sql.SQLException;
-
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import java.util.Random;
+import java.util.List;
+import java.util.ArrayList;
 
 public class PlayBoard extends JPanel {
     private Image backgroundImage;
@@ -17,17 +17,18 @@ public class PlayBoard extends JPanel {
     private JLabel timerLabel;
     private JLabel playerName1, playerName2, playerTime;
     private JButton backButton;
-    //private boolean isAgainstBot;
+    private boolean isAgainstBot = true;
 
     public void setName1(String name1) {
         this.name = name1;
     }
 
-    public void updateMatchData(String name1, String name2, String time) {
+    public void updateMatchData(String name1, String name2, String time, boolean isAgainstBot) {
         playerName1.setText(name1);
         playerName2.setText(name2);
         playerTime.setText(time);
-        this.timeLeft = Integer.parseInt(time);
+		this.timeLeft = Integer.parseInt(time);
+		this.isAgainstBot = isAgainstBot;
     }
 
     public PlayBoard(MainFrame mainFrame, String name1, String name2, String time) {
@@ -36,8 +37,8 @@ public class PlayBoard extends JPanel {
         this.name = name1;
         DBCon dbCon = new DBCon();
 
-        mainFrame.playData(name1, name2, time);
-        mainFrame.switchToScreen("playboard");
+        // mainFrame.playData(name1, name2, time);
+        // mainFrame.switchToScreen("playboard");
 
         backgroundImage = Toolkit.getDefaultToolkit().getImage("image/play-board.jpg");
         JPanel backgroundPanel = new JPanel() {
@@ -75,19 +76,38 @@ public class PlayBoard extends JPanel {
 
                 button.putClientProperty("index", index);
 
-                int finalRow = row;
-                int finalCol = col;
+                int[] finalPosition = new int[2];
+        		finalPosition[0] = row;
+        		finalPosition[1] = col;
+
                 button.addActionListener(e -> {
                     if (button.getText().isEmpty()) {
                         button.setText(isXTurn ? "X" : "O");
-                        isXTurn = !isXTurn;
+                        isXTurn = isAgainstBot || !isXTurn;
+
+                        checkResult(finalPosition[0], finalPosition[1], dbCon, mainFrame);
+						if(isAgainstBot) {
+							int[] botButtonIndex = getRandomEmptyButtonIndex();
+							int botRow = botButtonIndex[0];
+							int botCol = botButtonIndex[1];
+
+							finalPosition[0] = botRow;
+                    		finalPosition[1] = botCol;
+
+							JButton botButton = buttons[botRow][botCol];
+							botButton.setText("O");
+                            
+                            checkResult(finalPosition[0], finalPosition[1], dbCon, mainFrame);
+
+                            
+						}
 
                         if (!isTimerStarted) {
                             isTimerStarted = true;
-                            startTimer(time, mainFrame);
+                            startTimer(mainFrame);
                         }
 
-                        if (checkWinCondition(finalRow, finalCol)) {
+                        if (checkWinCondition(finalPosition[0], finalPosition[1])) {
                             String winner = button.getText();
                             JOptionPane.showMessageDialog(this, winner + " menang!", "Game Over",
                                     JOptionPane.INFORMATION_MESSAGE);
@@ -104,18 +124,17 @@ public class PlayBoard extends JPanel {
                                     e1.printStackTrace();
                                 }
                             }
-                            SwingUtilities.invokeLater(() -> backButton.setVisible(true));
-                            resetGame();
                             mainFrame.switchToScreen("duaPlayerFrame");
-                            
+                            resetGame();
                         } else if (isBoardFull()) {
                             JOptionPane.showMessageDialog(this, "Permainan Seri!", "Game Over",
                                     JOptionPane.INFORMATION_MESSAGE);
-                                    resetGame();
                                     mainFrame.switchToScreen("satuPlayerFrame");
-                                    
+                                    resetGame();
                             isTimerStarted = false;
                         }
+
+
                     }
                 });
                 buttons[row][col] = button;
@@ -199,9 +218,39 @@ public class PlayBoard extends JPanel {
         add(backgroundPanel, BorderLayout.CENTER);
     }
 
-    private void startTimer(String time, MainFrame mainFrame) {
+    private void checkResult(int i, int j, DBCon dbCon, MainFrame mainFrame) {
+        if (checkWinCondition(i, j)) {
+            JButton button = buttons[i][j];
+            String winner = button.getText();
+            JOptionPane.showMessageDialog(this, winner + " menang!", "Game Over",
+                    JOptionPane.INFORMATION_MESSAGE);
+            if (winner.equals("X")) {
+                try {
+                    dbCon.updateDatabase(playerName1.getText());
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            } else {
+                try {
+                    dbCon.updateDatabase(playerName2.getText());
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            mainFrame.switchToScreen("satuPlayerFrame");
+            //resetGame();
+        } else if (isBoardFull()) {
+            JOptionPane.showMessageDialog(this, "Permainan Seri!", "Game Over",
+                    JOptionPane.INFORMATION_MESSAGE);
+                    mainFrame.switchToScreen("satuPlayerFrame");
+                    //resetGame();
+            isTimerStarted = false;
+        }
+    }
+
+    private void startTimer(MainFrame mainFrame) {
         SwingUtilities.invokeLater(() -> backButton.setVisible(false));
-        //System.out.println("time passed di startTimer: "+time);
+        
         Thread timerThread = new Thread(() -> {
             
             while (timeLeft > 0) {
@@ -221,11 +270,29 @@ public class PlayBoard extends JPanel {
             SwingUtilities.invokeLater(() -> {
                 JOptionPane.showMessageDialog(null, "Waktu habis!", "Game Over", JOptionPane.WARNING_MESSAGE);
                 mainFrame.switchToScreen("duaPlayerFrame");
-                resetGame();
+                //resetGame();
             });
         });
 
         timerThread.start();
+    }
+
+    private int[] getRandomEmptyButtonIndex() {
+        List<int[]> indices = new ArrayList<int[]>();
+
+        for (int i = 0; i < buttons.length; i++) {
+            for (int j = 0; j < buttons[i].length; j++) {
+                if (buttons[i][j].getText().isEmpty()) {
+                    indices.add(new int[]{i, j});
+                }
+            }
+        }
+
+        Random random = new Random();
+        int index = random.nextInt(indices.size());
+
+        System.out.println(indices.size());
+        return indices.get(index);
     }
 
     private boolean checkWinCondition(int row, int col) {

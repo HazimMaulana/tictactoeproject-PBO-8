@@ -10,8 +10,11 @@ import java.awt.*;
 
 public class DuaPlayer extends JPanel {
     private Image backgroundImage;
+	private boolean isAgainstBot;
 
-    public DuaPlayer(MainFrame mainFrame) {
+    public DuaPlayer(MainFrame mainFrame, boolean isAgainstBot) {
+		this.isAgainstBot = isAgainstBot;
+
         setLayout(new BorderLayout());
 
         backgroundImage = Toolkit.getDefaultToolkit().getImage("image/BG.png");
@@ -49,6 +52,7 @@ public class DuaPlayer extends JPanel {
         namePlayer1.setFont(new Font("Bebas Neue", Font.PLAIN, 20));
         namePlayer1.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        
         JLabel namaLabel2 = new JLabel("PLAYER 2 NAME");
         namaLabel2.setFont(new Font("Bebas Neue", Font.BOLD, 24));
         namaLabel2.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -58,6 +62,7 @@ public class DuaPlayer extends JPanel {
         namePlayer2.setMaximumSize(new Dimension(300, 40));
         namePlayer2.setFont(new Font("Bebas Neue", Font.PLAIN, 20));
         namePlayer2.setAlignmentX(Component.CENTER_ALIGNMENT);
+
 
         JLabel timeLabel = new JLabel("SELECT PLAY TIME (SECOND)");
         timeLabel.setFont(new Font("Bebas Neue", Font.BOLD, 24));
@@ -104,8 +109,9 @@ public class DuaPlayer extends JPanel {
             } else {
                 Humanplayer player1 = new Humanplayer(playerName1);
                 Humanplayer player2 = new Humanplayer(playerName2);
-                player1.play(mainFrame, playerName1, playerName2, selectedTime);
-               
+                // PlayBoard play = new PlayBoard(mainFrame, playerName1, playerName2, selectedTime);
+				mainFrame.switchToScreen("playboard");
+				mainFrame.playData(playerName1, playerName2, selectedTime, isAgainstBot);
             }
         });
 

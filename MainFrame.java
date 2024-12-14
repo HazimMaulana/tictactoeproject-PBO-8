@@ -18,10 +18,10 @@ public class MainFrame extends JFrame {
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
-        SatuPlayer satuPlayer = new SatuPlayer(this);
+        DuaPlayer satuPlayer = new DuaPlayer(this,true);
         cardPanel.add(satuPlayer, "satuPlayerFrame");
 
-        DuaPlayer duaPlayer = new DuaPlayer(this);
+        DuaPlayer duaPlayer = new DuaPlayer(this,false);
         cardPanel.add(duaPlayer, "duaPlayerFrame");
 
         Beranda beranda = new Beranda(this);
@@ -50,7 +50,7 @@ public class MainFrame extends JFrame {
         cardLayout.show(cardPanel, screenName);
     }
 
-    public void playData(String name1, String name2, String time){
+    public void playData(String name1, String name2, String time, boolean isAgainstBot){
         this.name1 = name1;
         this.name2 = name2;
         this.time = time;
@@ -58,7 +58,7 @@ public class MainFrame extends JFrame {
         System.out.println("playdata time: " + time);
         System.out.println(this.playboard);
         if(this.playboard != null) {
-            this.playboard.updateMatchData(name1, name2, time);
+            this.playboard.updateMatchData(name1, name2, time, isAgainstBot);
         }
     }
 
