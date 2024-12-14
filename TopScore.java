@@ -72,15 +72,16 @@ public class TopScore extends JPanel {
             mainFrame.switchToScreen("beranda");
         });
 
+        JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
+        backButtonPanel.setOpaque(false); // Supaya transparan sesuai backgroundPanel
+        backButtonPanel.add(backButton);
+
         hoverButton(backButton);
-
-        leaderboardPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        leaderboardPanel.add(backButton);
-
+    
         wrapPanel.add(leaderboardPanel);
-
         backgroundPanel.add(titleLabel, BorderLayout.NORTH);
         backgroundPanel.add(wrapPanel, BorderLayout.CENTER);
+        backgroundPanel.add(backButtonPanel, BorderLayout.SOUTH);
 
         add(backgroundPanel, BorderLayout.CENTER);
     }

@@ -95,7 +95,7 @@ public class SatuPlayer extends JPanel {
         startButton.addActionListener(e -> {
             String playerName = namePlayer.getText().trim();
             String selectedTime = (String) timePlay.getSelectedItem();
-            DBCon dbcon =  new DBCon();
+            // DBCon dbcon =  new DBCon();
             System.out.println("berhasil pencet");
 
             if (playerName.isEmpty()) {
