@@ -12,10 +12,16 @@ public class PlayBoard extends JPanel {
     private JButton[][] buttons = new JButton[3][3];
     private boolean isXTurn = true;
     private boolean isTimerStarted = false;
-    private String name;
+    private String name, name1, name2;
+    private JLabel playerName1, playerName2;
 
     public void setName1(String name1){
         this.name = name1;
+    }
+
+    public void updateMatchData (String name1, String name2,  int time){
+        playerName1.setText(name1);
+        playerName2.setText(name2);
     }
 
     public PlayBoard(MainFrame mainFrame, String name1, String name2, String time) {
@@ -48,6 +54,7 @@ public class PlayBoard extends JPanel {
         gridContainer.setOpaque(false);
         gridContainer.setLayout(new GridLayout(3, 3, 10, 10));
 
+        int index = 0; // index untuk setiap kotak
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 JButton button = new JButton();
@@ -56,6 +63,9 @@ public class PlayBoard extends JPanel {
                 button.setBackground(Color.WHITE);
                 button.setFocusPainted(false);
                 button.setBorderPainted(false);
+
+                // Menyimpan indeks unik sebagai properti tombol
+                button.putClientProperty("index", index);
 
                 int finalRow = row;
                 int finalCol = col;
@@ -84,6 +94,7 @@ public class PlayBoard extends JPanel {
                 });
                 buttons[row][col] = button;
                 gridContainer.add(button);
+                index++; // Increment index untuk kotak berikutnya
             }
         }
 
@@ -104,7 +115,10 @@ public class PlayBoard extends JPanel {
         System.out.println(name);
         JPanel profilName = new RoundedPanel(Color.decode("#D9D9D9"), 10);
         profilName.setPreferredSize(new Dimension(150, 50));
-        JLabel labelProfile = new JLabel(name);
+        JLabel labelProfile = new JLabel(this.name1);
+
+        this.playerName1 = labelProfile;
+
         labelProfile.setForeground(Color.BLACK);
         profilName.setBorder(new EmptyBorder(10, 0, 0, 0));
         profilName.setOpaque(false);
@@ -123,8 +137,11 @@ public class PlayBoard extends JPanel {
         profilName1.setPreferredSize(new Dimension(150, 50));
         profilName1.setBorder(new EmptyBorder(10, 0, 0, 0));
         JLabel labelProfile1 = new JLabel(name);
+        this.playerName2 = labelProfile1;
+        labelProfile1.setForeground(Color.BLACK);
         profilName1.setOpaque(false);
         profilName1.add(labelProfile1);
+        
 
         JPanel profilePanel1 = new JPanel(new BorderLayout());
         profilePanel1.setOpaque(false);
