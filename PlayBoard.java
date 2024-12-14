@@ -16,6 +16,7 @@ public class PlayBoard extends JPanel {
     private boolean isTimerStarted = false;
     private String name, name1, name2;
     private JLabel playerName1, playerName2;
+    private JButton backButton;
 
     public void setName1(String name1) {
         this.name = name1;
@@ -113,6 +114,19 @@ public class PlayBoard extends JPanel {
             }
         }
 
+        backButton = new JButton("BACK");
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        backButton.setFont(new Font("Bebas Neue", Font.BOLD, 24));
+        backButton.setMaximumSize(new Dimension(130, 40));
+        backButton.setBackground(Color.RED);
+        backButton.setForeground(Color.WHITE);
+        backButton.addActionListener(e -> mainFrame.switchToScreen("duaPlayerFrame"));
+
+        JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 30));
+        backPanel.setOpaque(false);
+        backPanel.setBorder(new EmptyBorder(0, 30, 0, 0));
+        backPanel.add(backButton);
+
         JPanel gridWrapper = new JPanel();
         gridWrapper.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
         gridWrapper.setOpaque(false);
@@ -169,13 +183,16 @@ public class PlayBoard extends JPanel {
         profile.add(profilePanel1, BorderLayout.EAST);
 
         backgroundPanel.setBorder(new EmptyBorder(100, 0, 150, 0));
-        backgroundPanel.add(profile, BorderLayout.NORTH);
+        backgroundPanel.add(backPanel, BorderLayout.NORTH);
+        backgroundPanel.add(profile, BorderLayout.CENTER);
         backgroundPanel.add(gridWrapper, BorderLayout.SOUTH);
 
         add(backgroundPanel, BorderLayout.CENTER);
     }
 
     private void startTimer() {
+        SwingUtilities.invokeLater(() -> backButton.setVisible(false));
+
         Thread timerThread = new Thread(() -> {
             while (timeLeft > 0) {
                 try {
