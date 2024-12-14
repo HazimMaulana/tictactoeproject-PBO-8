@@ -26,7 +26,8 @@ public class MainFrame extends JFrame {
         Beranda beranda = new Beranda(this);
         cardPanel.add(beranda, "beranda");
 
-        PlayBoard playBoard = new PlayBoard(this, name1, name2, time);
+        PlayBoard playBoard = new PlayBoard(this, "name1", name2, time);
+        // System.out.println("di mainframe, name1 " + name1);
         cardPanel.add(playBoard, "playboard");
 
         TopScore topScore = new TopScore(this);

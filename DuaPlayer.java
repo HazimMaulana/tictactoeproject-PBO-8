@@ -103,7 +103,9 @@ public class DuaPlayer extends JPanel {
             } else {
                 DBCon dbCon = new DBCon();
                 try {
+                    
                     dbCon.start(mainFrame, playerName1, playerName2, selectedTime);
+            
                     // JOptionPane.showMessageDialog(this, "Player: " + playerName + "\nTime: " + selectedTime + " seconds");
                     mainFrame.switchToScreen("playboard"); // Ganti dengan layar permainan
                 } catch (SQLException ex) {

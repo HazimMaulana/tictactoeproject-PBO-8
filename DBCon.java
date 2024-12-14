@@ -41,6 +41,8 @@ public class DBCon {
 
             System.out.println("Berhasil simpan nama");
             
+            PlayBoard playBoard =  new PlayBoard(mainFrame, dbPlayerName1, dbPlayerName2, selectedTime);
+            playBoard.setName(dbPlayerName1);
             
 
         } catch (SQLException ex) {
