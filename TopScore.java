@@ -26,7 +26,7 @@ public class TopScore extends JPanel {
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
-        JPanel wrapPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 70));
+        JPanel wrapPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 30));
         wrapPanel.setOpaque(false);
 
         JPanel contentPanel = new JPanel();
@@ -35,22 +35,30 @@ public class TopScore extends JPanel {
         contentPanel.setPreferredSize(new Dimension(600, 600));
         contentPanel.setMaximumSize(new Dimension(600, 600));
 
-        JLabel instructionLabel = new JLabel("Leaderboard (Sorted by Wins)", SwingConstants.CENTER);
+        // Create panel for background with transparency and border
+        JPanel leaderboardPanel = new JPanel();
+        leaderboardPanel.setLayout(new BoxLayout(leaderboardPanel, BoxLayout.Y_AXIS));
+        leaderboardPanel.setOpaque(true);
+        leaderboardPanel.setBackground(new Color(0, 0, 0, 100));
+        leaderboardPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
+        leaderboardPanel.setPreferredSize(new Dimension(650, 350));
+
+        JLabel instructionLabel = new JLabel("Sorted by Wins", SwingConstants.CENTER);
         instructionLabel.setFont(new Font("Bebas Neue", Font.BOLD, 30));
         instructionLabel.setForeground(Color.WHITE);
         instructionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        contentPanel.add(instructionLabel);
-        contentPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        leaderboardPanel.add(instructionLabel);
+        leaderboardPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         try {
-            fetchLeaderboard(contentPanel);
+            fetchLeaderboard(leaderboardPanel);
         } catch (SQLException ex) {
             ex.printStackTrace();
             JLabel errorLabel = new JLabel("Error fetching leaderboard data", SwingConstants.CENTER);
             errorLabel.setFont(new Font("Bebas Neue", Font.BOLD, 20));
             errorLabel.setForeground(Color.RED);
             errorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            contentPanel.add(errorLabel);
+            leaderboardPanel.add(errorLabel);
         }
 
         JButton backButton = new JButton("BACK");
@@ -66,10 +74,10 @@ public class TopScore extends JPanel {
 
         hoverButton(backButton);
 
-        contentPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        contentPanel.add(backButton);
+        leaderboardPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        leaderboardPanel.add(backButton);
 
-        wrapPanel.add(contentPanel);
+        wrapPanel.add(leaderboardPanel);
 
         backgroundPanel.add(titleLabel, BorderLayout.NORTH);
         backgroundPanel.add(wrapPanel, BorderLayout.CENTER);
@@ -77,7 +85,7 @@ public class TopScore extends JPanel {
         add(backgroundPanel, BorderLayout.CENTER);
     }
 
-    private void fetchLeaderboard(JPanel contentPanel) throws SQLException {
+    private void fetchLeaderboard(JPanel leaderboardPanel) throws SQLException {
         String url = "jdbc:mysql://localhost:3306/db_tictactoe"; 
         String username = "root";
         String password = "";
@@ -98,8 +106,8 @@ public class TopScore extends JPanel {
                 scoreLabel.setForeground(Color.WHITE);
                 scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-                contentPanel.add(scoreLabel);
-                contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+                leaderboardPanel.add(scoreLabel);
+                leaderboardPanel.add(Box.createRigidArea(new Dimension(0, 10)));
                 rank++;
             }
         }
@@ -113,5 +121,4 @@ public class TopScore extends JPanel {
             }
         });
     }
-    
 }

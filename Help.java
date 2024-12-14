@@ -41,7 +41,8 @@ public class Help extends JPanel {
 
         JPanel textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-        textPanel.setOpaque(false);
+        textPanel.setOpaque(true); // Set to true to make the panel opaque
+        textPanel.setBackground(new Color(0, 0, 0, 100)); // Black color with 50% transparency
         textPanel.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(Color.WHITE, 2),
             BorderFactory.createEmptyBorder(20, 20, 20, 20)
