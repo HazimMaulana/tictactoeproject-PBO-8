@@ -13,6 +13,6 @@ public class BotPlayer extends Players{
     }    
 
     public void play(MainFrame main, String nama1, String nama2, String time) {
-        PlayBoard play = new PlayBoard(main, nama1, nama2, time);
+        PlayBoard play = new PlayBoard(main, nama1, "BOT", time);
     }
 }

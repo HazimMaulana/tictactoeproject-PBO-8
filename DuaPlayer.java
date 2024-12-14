@@ -62,6 +62,10 @@ public class DuaPlayer extends JPanel {
         namePlayer2.setMaximumSize(new Dimension(300, 40));
         namePlayer2.setFont(new Font("Bebas Neue", Font.PLAIN, 20));
         namePlayer2.setAlignmentX(Component.CENTER_ALIGNMENT);
+        if(isAgainstBot) {
+            namePlayer2.setText("BOT");
+            namePlayer2.setEditable(false);
+        }
 
 
         JLabel timeLabel = new JLabel("SELECT PLAY TIME (SECOND)");
