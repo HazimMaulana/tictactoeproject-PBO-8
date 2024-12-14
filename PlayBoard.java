@@ -9,25 +9,28 @@ import javax.swing.border.EmptyBorder;
 
 public class PlayBoard extends JPanel {
     private Image backgroundImage;
-    private JLabel timerLabel;
-    private int timeLeft = 30;
+    private int timeLeft;
     private JButton[][] buttons = new JButton[3][3];
     private boolean isXTurn = true;
     private boolean isTimerStarted = false;
     private String name, name1, name2;
-    private JLabel playerName1, playerName2;
+    private JLabel timerLabel;
+    private JLabel playerName1, playerName2, playerTime;
     private JButton backButton;
+    //private boolean isAgainstBot;
 
     public void setName1(String name1) {
         this.name = name1;
     }
 
-    public void updateMatchData(String name1, String name2, int time) {
+    public void updateMatchData(String name1, String name2, String time) {
         playerName1.setText(name1);
         playerName2.setText(name2);
+        playerTime.setText(time);
     }
 
     public PlayBoard(MainFrame mainFrame, String name1, String name2, String time) {
+        //this.isAgainstBot = isAgainstBot;
         setLayout(new BorderLayout());
         this.name = name1;
         DBCon dbCon = new DBCon();
@@ -48,11 +51,12 @@ public class PlayBoard extends JPanel {
         JPanel timerPanel = new RoundedPanel(Color.GRAY, 20);
         timerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        timerLabel = new JLabel("00:30", SwingConstants.CENTER);
+        timerLabel = new JLabel(time, SwingConstants.CENTER);
         timerLabel.setFont(new Font("Arial", Font.BOLD, 36));
         timerLabel.setForeground(Color.WHITE);
         timerLabel.setOpaque(false);
         timerPanel.add(timerLabel, BorderLayout.CENTER);
+        this.playerTime = timerLabel;
 
         JPanel gridContainer = new JPanel();
         gridContainer.setOpaque(false);
@@ -79,7 +83,7 @@ public class PlayBoard extends JPanel {
 
                         if (!isTimerStarted) {
                             isTimerStarted = true;
-                            startTimer();
+                            startTimer(time, mainFrame);
                         }
 
                         if (checkWinCondition(finalRow, finalCol)) {
@@ -99,11 +103,13 @@ public class PlayBoard extends JPanel {
                                     e1.printStackTrace();
                                 }
                             }
-                            resetGame();
+                            mainFrame.switchToScreen("duaPlayerFrame");
+                            //resetGame();
                         } else if (isBoardFull()) {
                             JOptionPane.showMessageDialog(this, "Permainan Seri!", "Game Over",
                                     JOptionPane.INFORMATION_MESSAGE);
-                            resetGame();
+                                    mainFrame.switchToScreen("satuPlayerFrame");
+                                    //resetGame();
                             isTimerStarted = false;
                         }
                     }
@@ -139,11 +145,10 @@ public class PlayBoard extends JPanel {
 
         JLabel profileLabel = new JLabel(profilePict);
 
-        System.out.println(name);
+        //System.out.println(name);
         JPanel profilName = new RoundedPanel(Color.decode("#D9D9D9"), 10);
         profilName.setPreferredSize(new Dimension(150, 50));
         JLabel labelProfile = new JLabel(this.name1);
-
         this.playerName1 = labelProfile;
 
         labelProfile.setForeground(Color.BLACK);
@@ -190,10 +195,24 @@ public class PlayBoard extends JPanel {
         add(backgroundPanel, BorderLayout.CENTER);
     }
 
-    private void startTimer() {
+    private void startTimer(String time, MainFrame mainFrame) {
         SwingUtilities.invokeLater(() -> backButton.setVisible(false));
-
+        System.out.println("time passed di startTimer: "+time);
         Thread timerThread = new Thread(() -> {
+            if (time == "30"){
+                timeLeft = 30;
+            }else if(time == "45"){
+                timeLeft = 45;
+            }else if(time == "60"){
+                timeLeft = 60;
+            }else if(time == "90"){
+                timeLeft = 90;
+            }else if(time == "120"){
+                timeLeft = 120;
+            }else {
+                System.out.println("TimeLeft di startTimer: "+timeLeft);
+                System.out.println("Input Waktu Invalid!");
+            }
             while (timeLeft > 0) {
                 try {
                     Thread.sleep(1000);
@@ -210,7 +229,8 @@ public class PlayBoard extends JPanel {
             }
             SwingUtilities.invokeLater(() -> {
                 JOptionPane.showMessageDialog(null, "Waktu habis!", "Game Over", JOptionPane.WARNING_MESSAGE);
-                resetGame();
+                mainFrame.switchToScreen("duaPlayerFrame");
+                //resetGame();
             });
         });
 

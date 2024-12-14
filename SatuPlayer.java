@@ -101,8 +101,9 @@ public class SatuPlayer extends JPanel {
             if (playerName.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please enter your name!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                mainFrame.playData(playerName, "bot", selectedTime);
-                mainFrame.switchToScreen("playboard");
+                PlayBoard play = new PlayBoard(mainFrame, playerName, "BOT", selectedTime);
+                // mainFrame.playData(playerName, "bot", selectedTime);
+                // mainFrame.switchToScreen("playboard");
                 // try {
                 //     dbcon.start(mainFrame, playerName, "bot",selectedTime);
                 //     mainFrame.playData(playerName, "bot", selectedTime);

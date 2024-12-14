@@ -55,10 +55,10 @@ public class MainFrame extends JFrame {
         this.name2 = name2;
         this.time = time;
 
-        System.out.println("playdata" + name1);
+        System.out.println("playdata time: " + time);
         System.out.println(this.playboard);
         if(this.playboard != null) {
-            this.playboard.updateMatchData(name1, name2, 65);
+            this.playboard.updateMatchData(name1, name2, time);
         }
     }
 

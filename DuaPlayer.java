@@ -93,6 +93,7 @@ public class DuaPlayer extends JPanel {
             String playerName1 = namePlayer1.getText().trim();
             String playerName2 = namePlayer2.getText().trim();
             String selectedTime = (String) timePlay.getSelectedItem();
+            System.out.println("Selectedtime di duaplayer: "+selectedTime);
 
             if (playerName1.isEmpty() && playerName2.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please enter your name!", "Error", JOptionPane.ERROR_MESSAGE);
