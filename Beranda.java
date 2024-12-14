@@ -44,6 +44,8 @@ class Beranda extends JPanel {
                 } else if (e.getSource() == duaPlayer) {
                     mainFrame.switchToScreen("duaPlayerFrame");
                     // JOptionPane.showMessageDialog(mainFrame, "Mode 2 Player belum tersedia.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                } else if (e.getSource() == topScore) {
+                    mainFrame.switchToScreen("TopScore");
                 } else if (e.getSource() == help) {
                     JOptionPane.showMessageDialog(mainFrame, "Bantuan akan ditambahkan nanti.", "Help", JOptionPane.INFORMATION_MESSAGE);
                 } else if (e.getSource() == exit) {
